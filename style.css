@@ -2,7 +2,9 @@ p {
     text-indent: 25px;
 }
 
-
+.container2{
+    width: 100%;
+}
 
 #map {
     width: 100%;

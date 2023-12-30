@@ -323,15 +323,46 @@ function addHint(data) {
     }
 }
 // ------------------------------------------------СЕКЦИЯ ДЛЯ ВЫБОРА ЯЗЫКА ГИДА----------------------------------------------------------- 
-function hideNoneSelected () {
-    
+let body = document.querySelector('.gid-fillbody');
+let elems;
+function hideElement(element) {
+    if (!element.classList.contains('d-none')) {
+        element.classList.add('d-none');
+    }
+}
+
+function showElement(element) {
+    let delElem = document.querySelector('.chosen-gids');
+    delElem.classList.add('d-none')
+    if (element.classList.contains('d-none')) {
+        element.classList.remove('d-none');
+    }
 }
 document.querySelector('.lang-gid').addEventListener('change', (e) => {
     let value = e.target.value;
-    console.log(value);
+    elems = body.querySelectorAll('.git-table');
+    let foundResults = false;  // Флаг, указывающий, были ли найдены результаты
 
-})
-// ------------------------------------------------СЕКЦИЯ ДЛЯ ВЫБОРА ЯЗЫКА ГИДА----------------------------------------------------------- 
+    for (let i = 0; i < elems.length; i++) {
+        let langGid = elems[i].querySelector('.language').textContent;
+        if (langGid === value) {
+            showElement(elems[i]);
+            foundResults = true;
+        } else {
+            hideElement(elems[i]);
+        }
+    }
+
+    // Проверяем, были ли найдены результаты
+    if (!foundResults) {
+        console.log('Нет результатов для выбранного языка.');
+        let delElem = document.querySelector('.chosen-gids');
+        delElem.classList.remove('d-none')
+    }
+});
+// ------------------------------------------------ОБРАБОТЧИК ДЛЯ ПЕЧАТИ ОПЫТ РАБОТЫ---------------------------------------------------------- 
+const workFromForm = document.getElementById('work-from');
+const workToForm = document.getElementById('work-to');
 
 // ------------------------------------------------ЗАГРУЗКА----------------------------------------------------------- 
 window.onload = function () {
