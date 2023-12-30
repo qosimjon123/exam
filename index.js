@@ -26,8 +26,115 @@ let getRequestMainTable = async function (url, method) {
 
     }
 };
+// --------------------------------------------------------таблица с гидами---------------------------------------------------------------
+function getGidTable(id) {
+    //Поменяй ссылку на свою
+
+    let cur_url = new URL(`http://exam-2023-1-api.std-900.ist.mospolytech.ru/api/routes/${id}/guides?api_key=${apiKey}`);
+    getRequestMainTable(cur_url, 'GET')
+        .then((data) => {
+            return data.json()
+        })
+        .then(data => { fillGitTable(data); fillSelectlang(data) }
+        )
+        .catch(error => console.error(`Something went wrong: ${error}`))
+
+}
+//   ДЛЯ ОПРЕДЕЛЕНИЯ ГОД/ЛЕТ/ГОДА
+function plural(number, titles) {
+    let cases = [2, 0, 1, 1, 1, 2];
+    return titles[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5) ? number % 10 : 5]];
+}
+
+let declension = ['год', 'года', 'лет'];
+//-------------------------------------------------
+let BdForLang = new Set();
+function fillSelectlang(data) {
+    console.log(BdForLang)
+    let sessionDb = new Set();
+
+    for (let i = 0; i < data.length; i++) {
+        sessionDb.add(data[i].language);
+    }
+
+    let selectLang = document.querySelector('.lang-gid');
+
+
+    selectLang.innerHTML = "";
+
+
+    let header = document.createElement('option');
+    header.setAttribute("disabled", true);
+    header.setAttribute("selected", true);
+    header.textContent = "Выбрать язык";
+    selectLang.appendChild(header);
+
+    for (let lang of sessionDb) {
+        if (BdForLang.has(lang)) {
+            console.log(lang)
+        } else {
+            BdForLang.add(lang);
+        }
+    }
+
+    BdForLang.forEach(value => {
+        let newOption = document.createElement('option');
+        newOption.value = value;
+        newOption.textContent = value;
+        selectLang.append(newOption);
+    })
+}
+function fillGitTable(data) {
+    let tableBody = document.querySelector('.gid-fillbody');
+    let template = document.querySelector('.template-row-gid');
+
+    for (let i = 0; i < data.length; i++) {
+        let clonedRow = template.content.cloneNode(true);
+
+        let id = clonedRow.querySelector('.id-git-route');
+        let Fio = clonedRow.querySelector('.FIO');
+        let language = clonedRow.querySelector('.language');
+        let workExperience = clonedRow.querySelector('.workExperience');
+        let PricePerHour = clonedRow.querySelector('.PricePerHour');
+
+        id.textContent = data[i].id;
+        id.setAttribute('data-route-id', data[i].route_id);
+        Fio.textContent = data[i].name;
+        let pluralDetect = plural(data[i].workExperience, declension);
+        workExperience.textContent = data[i].workExperience + ` ${pluralDetect}`;
+        language.textContent = data[i].language;
+        PricePerHour.textContent = data[i].pricePerHour + " ₽";
+
+        tableBody.appendChild(clonedRow);
+    }
+}
+
+
+function DeleteGid(routeId, method) {
+    let table = document.querySelector(".gid-fillbody");
+    let currentRouteId = table.querySelectorAll(".id-git-route")
+
+
+
+    for (const route of currentRouteId) {
+
+        let route2 = route.getAttribute('data-route-id');
+
+        if (route2 == routeId) {
+            route.closest('tr').remove();
+        }
+    }
+
+
+}
+
 //-------------------------------------------------Добавление Записей----------------------------------------------------------
 
+
+// обязательное анализ кода и исправление некоторых данных
+// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 function fillTable(data) {
     let tableBody = document.querySelector('.fillbody');
     let template = document.querySelector('.template-row');
@@ -53,9 +160,11 @@ function fillTable(data) {
 }
 let parse = [];
 function parseData(data) {
+    parse = [];
+    currentPage = 0;
     let result = [];
-    for (let i = 0 ; i < data.length; i++ ) {
-        if(result.length == 5) {
+    for (let i = 0; i < data.length; i++) {
+        if (result.length == 5) {
             parse.push(result);
             result = [];
         }
@@ -63,26 +172,75 @@ function parseData(data) {
             result.push(data[i])
         }
     }
-    
-}
-let currentPage = 0;
-let pagBtns = document.querySelector('.pagination-btn');
-pagBtns.addEventListener('click')
-function paginationBtnActived () {
+    parse.push(result);
+    updateContent();
 
 }
+
+let currentPage = 0;
+let pagBtns = document.querySelector('.pagination-btn');
+
+pagBtns.addEventListener('click', paginationBtnActived);
+
+function paginationBtnActived(event) {
+    if (event.target.textContent === "Далее") {
+        if (currentPage < parse.length - 1) {
+            currentPage++;
+            updateContent();
+        }
+    } else if (event.target.textContent === "Назад") {
+        if (currentPage > 0) {
+            currentPage--;
+            updateContent();
+        }
+    }
+
+    // Обновление состояния кнопок
+    updateButtonsState();
+}
+
+function updateContent() {
+
+    //console.log('Обновление содержимого для страницы', currentPage);
+    fillTable(parse[currentPage]);
+}
+// ---------------------------------ONLY NEXT OR PREV BUTTONS------------------------------------ 
+function updateButtonsState() {
+    // Обновление состояния кнопок
+    let nextBtn = document.querySelector('.btn-next');
+    let prevBtn = document.querySelector('.btn-prev');
+
+    if (currentPage === 0) {
+        prevBtn.classList.add('disabled');
+    } else {
+        prevBtn.classList.remove('disabled');
+    }
+
+    if (currentPage === parse.length - 1) {
+        nextBtn.classList.add('disabled');
+    } else {
+        nextBtn.classList.remove('disabled');
+    }
+}
+// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
+
+
 //-------------------------------------------------Добавление Записей----------------------------------------------------------
 
 function getMainTable() {
-    // Поменяй ссылку на свою
     let url = `http://exam-2023-1-api.std-900.ist.mospolytech.ru/api/routes?api_key=${apiKey}`;
     getRequestMainTable(url, 'GET')
         .then((data) => {
             return data.json()
         })
-        .then(data => { parseData(data); addHint(data); 
-            //getMainObject(data); 
-            saveToSessionStorage(data) }
+        .then(data => {
+            parseData(data); addHint(data);
+
+            saveToSessionStorage(data)
+        }
         )
         .catch(error => console.error(`Something went wrong: ${error}`))
 }
@@ -93,7 +251,7 @@ function searchFromBtn() {
     let data = JSON.parse(sessionStorage.getItem('data'));
     if (inputValue == "") {
         console.log("Input field is empty");
-        fillTable(data);
+        parseData(data);
     }
     else {
         let newData = [];
@@ -103,16 +261,57 @@ function searchFromBtn() {
             }
         }
         if (newData.length == 0) {
-            console.error("По вашему запросу ничего не найдено. Плак-плак");
             let activateMsg = document.querySelector(".alert-msg")
             activateMsg.classList.remove("d-none");
             setTimeout(() => activateMsg.classList.add("d-none"), 2000)
         }
         else {
-            fillTable(newData);
+            parseData(newData);
         }
     }
 }
+// ------------------------------------------------Кнопка для выборанного маршрута----------------------------
+let chosenRoute = new Set();
+document.querySelector('.fillbody').addEventListener('click', function (event) {
+    // Проверка, что клик был по кнопке
+    if (event.target.tagName === 'BUTTON') {
+        // Получение родительской строки (tr)
+        let row = event.target.closest('tr');
+
+        // Получение значения атрибута data-id из строки
+        let dataId = row.getAttribute('data-id');
+
+        // Ваш код обработки клика на кнопку
+        //console.log('Кнопка в строке с data-id ' + dataId + ' была нажата.');
+        if (chosenRoute.has(dataId)) {
+            DeleteGid(dataId, 'deluseroute');
+            chosenRoute.delete(dataId);
+
+            if (chosenRoute.size == 0) {
+                let delElem = document.querySelector('.chosen-gids');
+                delElem.classList.remove('d-none')
+
+
+            }
+            //console.log(chosenRoute);
+
+        } else {
+            chosenRoute.add(dataId);
+            if (chosenRoute.size > 0) {
+                let delElem = document.querySelector('.chosen-gids');
+                delElem.classList.add('d-none')
+
+
+            }
+            getGidTable(dataId);
+            //console.log(chosenRoute);
+        }
+
+    }
+
+});
+// ------------------------------------------------Кнопка для выборанного маршрута----------------------------
+
 
 filterBtn.addEventListener('click', searchFromBtn)
 function addHint(data) {
@@ -123,6 +322,17 @@ function addHint(data) {
         getData.append(string);
     }
 }
+// ------------------------------------------------СЕКЦИЯ ДЛЯ ВЫБОРА ЯЗЫКА ГИДА----------------------------------------------------------- 
+function hideNoneSelected () {
+    
+}
+document.querySelector('.lang-gid').addEventListener('change', (e) => {
+    let value = e.target.value;
+    console.log(value);
+
+})
+// ------------------------------------------------СЕКЦИЯ ДЛЯ ВЫБОРА ЯЗЫКА ГИДА----------------------------------------------------------- 
+
 // ------------------------------------------------ЗАГРУЗКА----------------------------------------------------------- 
 window.onload = function () {
     getMainTable();
