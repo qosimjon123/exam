@@ -212,6 +212,105 @@
         </div>
     </div>
 
+    <!-- ----------------------------------------------модальное окно для создание заявки ----------------------------------------------------------->
+
+    <section>
+        <!-- Modal -->
+        <div class="modal fade" id="addRequestModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="">Оформление заявки</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <span>ФИО гида:
+                                <span class="gid-name fw-bold"> --- </span>
+                            </span>
+                            <br>
+                            <span>Название маршрута:
+                                <span class="excursion-name fw-bold"></span>
+                            </span>
+                            <form class="add-request-form add-event">
+                                <div class="row my-5">
+
+                                    <div class="col-sm-6 pt-3">
+                                        <label for="date">Дата экскурсии: </label>
+                                        <input type="date" id="date" class="datepicker form-control excursion-date"
+                                            name="date" placeholder="Дата" required>
+                                    </div>
+                                    <div class="col-sm-6 pt-3">
+                                        <label for="start-time">Время начала: </label>
+                                        <input type="time" id="start-time" class="form-control excursion-start"
+                                            name="time" placeholder="Время" min="09:00" max="23:00" step="1800"
+                                            required>
+
+                                    </div>
+                                    <div class="col-sm-6 pt-3">
+                                        <label for="time-select">Длительность экскурсии(час):</label>
+                                        <select name="hours" id="hours-select"
+                                            class="form-select w-100 col-sm-6 hours-selected"
+                                            aria-label="Default select example">
+                                            <option value=1 selected class="one">1</option>
+                                            <option value=2>2</option>
+                                            <option value=3>3</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6 pt-3">
+                                        <label for="count-people">Количество человек: </label>
+                                        <input type="number" id="count-people" class="form-control people-amount"
+                                            data-bind="value:replyNumber" min="1" max="20" required />
+                                    </div>
+                                </div>
+
+                                <h5>Дополнительные опции</h5>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="flexCheckDefault" value=""
+                                        class="option-name">
+                                    <label class="form-check-label fst-italic" for="flexCheckDefault">
+                                        Приобретение тематических сувениров
+                                    </label>
+                                    <br>
+                                    <br>
+                                    <span class="fw-bold ">Описание опции
+                                        <p class="option-description">При наличии интересных тематических сувениров
+                                            посетители имеют возможность обогатить свой опыт посещения, однако стоимость
+                                            их выбора увеличится на 500 рублей за каждого гостя. Эта дополнительная
+                                            опция предоставляет возможность сохранить воспоминания о посещении и внести
+                                            яркие акценты в уникальный опыт каждого посетителя.</p>
+                                    </span>
+                                    <br>
+                                    <span>Размер надбавки(без учета %):
+                                        <span class="option-discount"> ---</span>
+                                    </span>
+                                </div>
+                                <div class="my-3">
+                                    <p><i class="text-success">Итоговая стоимость: </i>
+                                        <span class="text-success excursion-price">---</span>
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary col-md-3"
+                                        data-bs-dismiss="modal">Отменить</button>
+                                    <button type="submit"
+                                        class="btn btn-primary col-md-3 sendRequest">Отправить</button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ----------------------------------------------модальное окно для создание заявки ----------------------------------------------------------->
+
+
+
     <!---------------------Main Table------------------------------------>
     <div class="container table-responsive">
 
@@ -230,13 +329,25 @@
                 </tr>
             </tbody>
         </table>
-        <div class="container d-flex justify-content-around pagination-btn">
-            <button class="btn btn-primary btn-prev disabled">Назад</button>
-            <button class="btn btn-primary btn-next">Далее</button>
 
-        </div>
     </div>
+    <!-- <div class="container d-flex justify-content-around pagination-btn">
+        <button class="btn btn-primary btn-prev disabled">Назад</button>
+        <button class="btn btn-primary btn-next">Далее</button>
 
+    </div> -->
+    <nav aria-label="...">
+        <ul class="pagination pagination-btn d-flex justify-content-center m-auto">
+            <li class="page-item btn-prev disabled">
+                <span class="page-link">Назад</span>
+            </li>
+            <li class="page-item btn-next">
+                <a class="page-link" >Далее</a>
+            </li>
+        </ul>
+    </nav>
+    
+    
     <template class="template-row">
         <tr data-id="#" id="id-tr" class="main-table text-white">
             <th scope="row" class="route ">1</th>
@@ -262,17 +373,17 @@
                         </div>
                     </form>
                 </div>
-                <div class="col-md-6 col-sm-10 d-flex">
+                <div class="col-md-6 col-sm-10 d-flex opit-raboty">
                     <h5 class="mx-4 text-white fs-5">Опыт работы</h5>
                     <form id="work-from">
                         <div class="form-outline ms-3">
-                            <input type="number" id="work-from" class="form-control" />
+                            <input type="number" id="work-from" class="form-control work-from2" />
                             <label class="from-label text-white">От</label>
                         </div>
                     </form>
                     <form id="work-to">
                         <div class="form-outline ms-3">
-                            <input type="number" id="work-to" class="form-control" />
+                            <input type="number" id="work-to" class="form-control work-to2" />
                             <label class="to-label text-white">До</label>
                         </div>
                     </form>
@@ -284,6 +395,7 @@
             <thead class="table-dark">
                 <tr>
                     <th scope="col">№</th>
+                    <th scope="col"></th>
                     <th scope="col">ФИО</th>
                     <th scope="col">Языки</th>
                     <th scope="col">Опыт работы</th>
@@ -293,25 +405,40 @@
             </thead>
             <tbody class="gid-fillbody">
                 <tr class="chosen-gids">
-                    <td colspan="6" class="text-center text-white text-msg p-3">Доступных гидов нет или маршрут не
+                    <td colspan="7" class="text-center text-white text-msg p-3">Доступных гидов нет или маршрут не
                         выбран. </td>
                 </tr>
             </tbody>
         </table>
+        <!-- --------------------------------------------------C---------------------------------------------------------------------- -->
+
+        <div class="alert alert-warning alert-message d-none position-fixed top-0 start-50 translate-middle-x alert-dismissible fade show"
+            role="alert">
+            <strong class="alert-msg1">Упс!</strong class="alert-msg2"> You should check in on some of those fields
+            below.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- --------------------------------------------------C---------------------------------------------------------------------- -->
 
         <template class="template-row-gid">
             <tr class="gid-tr git-table text-white">
-                <td scope="row" data-route-id="" class="id-git-route">1</th>
-                <td class="FIO">example</td>
-                <td class="language">Uzkiy</td>
-                <td class="workExperience">1</td>
-                <td class="PricePerHour">1913</td>
-                <td><button class="choose btn btn-dark ">Выбрать</button></td>
+                <td scope="row" data-route-id="" class="id-git-route align-middle">1</th>
+                <th class="img fs-1 align-middle">🙋‍♂️</th>
+                <td class="FIO align-middle">example</td>
+                <td class="language align-middle">Uzkiy</td>
+                <td class="workExperience align-middle">1</td>
+                <td class="PricePerHour align-middle">1913</td>
+                <td class="align-middle"><button type="button" class="choose btn btn-dark" data-bs-toggle="modal"
+                        data-bs-target="#addRequestModal">
+                        Выбрать
+                    </button></td>
+
             </tr>
         </template>
         <template class="template-gid">
             <tr class="chosen-gids git-table">
-                <td colspan="6" class="text-center text-white text-msg p-3">Доступных гидов нет или маршрут не выбран.
+                <td colspan="7" class="text-center text-white text-msg p-3">Доступных гидов нет или маршрут не выбран.
                 </td>
             </tr>
         </template>
@@ -319,11 +446,11 @@
     <!------------------------------------------------------------------------------------------------------------>
     <!-- FOOTER -->
     <footer class="bg-body-tertiary text-center text-lg-start bg-info mt-5">
-        
+
         <div class="container-fluid p-4">
-            
+
             <div class="row text-justify justify-content-center">
-                
+
                 <div class="col-lg-4 col-md-10 mb-4 mb-md-0 ">
                     <h5 class="text-uppercase text-primary">Отпускайтесь в мире приключений</h5>
                     <p class="text-white">
@@ -339,7 +466,7 @@
                         в
                         путешествие. Будьте в курсе новых открытий каждый месяц!
                     </p>
-                    
+
                 </div>
 
             </div>
@@ -351,7 +478,7 @@
             © 2024 Copyright:
             <a class="text-body" href="#">MoscowTravel. Все права защищены. 🌟</a>
         </div>
-        
+
     </footer>
     <!------------------------------------------------------------------------------------------------------------>
 

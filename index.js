@@ -1,4 +1,6 @@
 'use strict';
+//-------------------------------------------------BOOTSTRAP----------------------------------------------------------
+
 //-------------------------------------------------MAP----------------------------------------------------------
 
 let map;
@@ -50,7 +52,7 @@ let declension = ['год', 'года', 'лет'];
 //-------------------------------------------------
 let BdForLang = new Set();
 function fillSelectlang(data) {
-    console.log(BdForLang)
+    //console.log(BdForLang)
     let sessionDb = new Set();
 
     for (let i = 0; i < data.length; i++) {
@@ -193,10 +195,11 @@ function paginationBtnActived(event) {
             currentPage--;
             updateContent();
         }
-    }
+    } else
 
     // Обновление состояния кнопок
     updateButtonsState();
+    
 }
 
 function updateContent() {
@@ -281,7 +284,7 @@ document.querySelector('.fillbody').addEventListener('click', function (event) {
         // Получение значения атрибута data-id из строки
         let dataId = row.getAttribute('data-id');
 
-        // Ваш код обработки клика на кнопку
+
         //console.log('Кнопка в строке с data-id ' + dataId + ' была нажата.');
         if (chosenRoute.has(dataId)) {
             DeleteGid(dataId, 'deluseroute');
@@ -361,11 +364,196 @@ document.querySelector('.lang-gid').addEventListener('change', (e) => {
     }
 });
 // ------------------------------------------------ОБРАБОТЧИК ДЛЯ ПЕЧАТИ ОПЫТ РАБОТЫ---------------------------------------------------------- 
-const workFromForm = document.getElementById('work-from');
-const workToForm = document.getElementById('work-to');
+const workContainer = document.querySelector('.opit-raboty');
+let container;
 
+workContainer.addEventListener("change", (e) => {
+    let firstValue = e.target.value;
+    if(e.target.classList.contains()){
+        
+    }
+})
+
+
+
+// ------------------------ВСЕ ЧТО СВЯЗАНО С ОТПРАВКОЙ ФОРМЫ НА СЕРВЕР + ОБЩАЯ ФУНКЦИЯ ДЛЯ ВСЕХ ТИПОВ ЗАПРОСА---------------------------------
+
+async function requests(url, data, method) {
+    if (method == "POST") {
+        return await fetch(url, {
+            method: method,
+            body: data
+        })
+            .then(Response => Response.json())
+            .catch((e) => console.log("Error in " + method))
+    } else if (method == "GET") {
+        return await fetch(url)
+            .then(Response => Response.json())
+            .catch((e) => console.log("Error in " + method))
+    } else if (method == "PUT") {
+        return await fetch(url, {
+            method: method,
+            body: data
+        })
+            .then(Response => Response.json())
+            .catch((e) => console.log("Error in " + method))
+    } else if (method == "DELETE") {
+        return await fetch(url, {
+            method: method,
+            body: data
+        })
+            .then(Response => Response.json())
+            .catch((e) => console.log("Error in " + method))
+    }
+}
+// ----------------------------------------MODAL WINDOW TO SEND-------------------------------------------------------
+function getRouteNameById(data) {
+    let local = JSON.parse(sessionStorage.getItem('data'));
+    console.log(local[5].name)
+    for (let i = 0; i < local.length; i++) {
+        if (local[i].id == data) {
+            console.log(local[i].name);
+            return local[i].name;
+        }
+    }
+}
+document.querySelector('.gid-fillbody').addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON') {
+        // Получение родительской строки (tr)
+
+        let row = e.target.closest('tr');
+
+        // --------------------------------------------получение данных из строки-------------------------------------------------
+        let gidId = row.querySelector('.id-git-route');
+        let routeId = gidId.getAttribute('data-route-id');
+        let gidName = row.querySelector('.FIO');
+        let routeName = getRouteNameById(Number(routeId));
+        // --------------------------------------------ОБНОВИТЬ И СБРОС ДЛЯ КАЖДОЙ СТРОКИ-------------------------------------------------
+        let duration = document.querySelector(".one");
+        duration.selected = true;
+        document.querySelector('.excursion-start').value = "";
+        document.querySelector('#flexCheckDefault').checked = false;
+        let peopleCount = document.querySelector('.people-amount');
+        peopleCount.value = 1;
+        let gidPrice = row.querySelector(".PricePerHour")
+
+        // --------------------------------------------получение данных из модального окна + textcontent-------------------------------------------------
+        let fioField = document.querySelector('.gid-name');
+        fioField.textContent = gidName.textContent;
+        let routeField = document.querySelector('.excursion-name');
+        routeField.textContent = routeName;
+        let nadbavka = document.querySelector('.option-discount');
+        nadbavka.textContent = 0 + " ₽";
+        let price = document.querySelector('.excursion-price');
+        price.textContent = gidPrice.textContent;
+
+        // Ваш код обработки клика на кнопку
+        //console.log('Кнопка в строке с data-id ' + dataId + ' была нажата.');
+
+    }
+})
+
+
+//--------------------------------------------------УСЛОВИИ ДЛЯ МОДАЛЬНОГО ОКНА ----------------------------------------------------------
+function conditionOfModalForm() {
+    //---------------DATE-------------------
+    function addMonths(date, months) {
+        let newDate = new Date(date);
+        newDate.setMonth(newDate.getMonth() + months);
+        return newDate;
+    }
+
+    let dateInput = document.querySelector('.datepicker');
+    let today = new Date();
+    let todayString = today.toISOString().split('T')[0];
+
+    let endDate = addMonths(today, 3);
+    let endDateString = endDate.toISOString().split('T')[0];
+    dateInput.setAttribute("value", todayString)
+    dateInput.setAttribute("min", todayString);
+    dateInput.setAttribute("max", endDateString);
+
+    // console.log(todayString, endDateString);
+
+    //---------------CLOCK-------------------
+
+
+
+
+}
+// ------------------------------------------------ADD EVENTLISTENER FOR FORM FIELDS---------------------------------------------------------- 
+function calculatePrice(guideServiceCost, hoursNumber, isThisDayOff, isItMorning, isItEvening, numberOfVisitors) {
+    let basePrice = guideServiceCost * hoursNumber * isThisDayOff;
+    let morningSurcharge = isItMorning ? 400 : 0;
+    let eveningSurcharge = isItEvening ? 1000 : 0;
+    let visitorsSurcharge = 0;
+
+    if (numberOfVisitors > 1 && numberOfVisitors <= 5) {
+        visitorsSurcharge = 0;
+    } else if (numberOfVisitors > 5 && numberOfVisitors <= 10) {
+        visitorsSurcharge = 1000;
+    } else if (numberOfVisitors > 10 && numberOfVisitors <= 20) {
+        visitorsSurcharge = 1500;
+    }
+
+    let totalPrice = basePrice + morningSurcharge + eveningSurcharge + visitorsSurcharge;
+    return totalPrice;
+}
+function changePrice(sum, nadbavka) {
+    let guideServiceCost = document.querySelector('.excursion-price');
+    guideServiceCost.textContent = sum + " ₽";
+    let nadbavka2 = document.querySelector('.option-discount');
+    nadbavka2.textContent = nadbavka + " ₽";
+}
+document.querySelector('.add-event').addEventListener('change', (e) => {
+    let guideServiceCost = document.querySelector('.excursion-price').textContent.split(" ")[0];
+    let day = document.querySelector(".datepicker").value;
+    let hoursNumber = document.querySelector('.hours-selected').value;
+    let optionOne = false;
+    let optionTwo = false;
+    let sThisDayOff = false;
+    let isItMorning = false;
+    let isItEvening = false;
+    let nadbavka = 0;
+    let sum = 0;
+    if (e.target.classList.contains('datepicker')) {
+        let time = e.target.value;
+
+        console.log(day)
+    } else if (e.target.classList.contains('excursion-start')) {
+        let date = document.querySelector(".datepicker").value;
+        let selectedTime = e.target.value;
+        let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        let selectedTimeObj = new Date(`2000-01-01T${selectedTime}`);
+        let currentTimeObj = new Date(`2000-01-01T${currentTime}`);
+
+        let currentDate = new Date().toISOString().split('T')[0];
+
+        if (currentDate === date && currentTimeObj > selectedTimeObj) {
+            let timeDifference = (currentTimeObj - selectedTimeObj) / (1000 * 60);
+
+            if (timeDifference > 30 && timeDifference <= 60) {
+                optionOne = true;
+                console.log("Условие выполнено");
+            } else {
+                console.log("Время меньше чем текущей времени или условие не выполнено");
+            }
+        }
+
+
+    } else if (e.target.classList.contains('hours-selected')) {
+
+        console.log(hoursNumber)
+    } else if (e.target.classList.contains('people-amount')) {
+
+    } else if (e.target.classList.contains('option-name')) {
+
+    }
+    // sum = gui
+    changePrice(sum, nadbavka);
+})
 // ------------------------------------------------ЗАГРУЗКА----------------------------------------------------------- 
 window.onload = function () {
     getMainTable();
-
+    conditionOfModalForm();
 };
