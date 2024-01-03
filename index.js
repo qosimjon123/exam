@@ -197,9 +197,9 @@ function paginationBtnActived(event) {
         }
     } else
 
-    // Обновление состояния кнопок
-    updateButtonsState();
-    
+        // Обновление состояния кнопок
+        updateButtonsState();
+
 }
 
 function updateContent() {
@@ -369,8 +369,8 @@ let container;
 
 workContainer.addEventListener("change", (e) => {
     let firstValue = e.target.value;
-    if(e.target.classList.contains()){
-        
+    if (e.target.classList.contains()) {
+
     }
 })
 
@@ -417,6 +417,7 @@ function getRouteNameById(data) {
         }
     }
 }
+let globalPrice = 0;
 document.querySelector('.gid-fillbody').addEventListener('click', (e) => {
     if (e.target.tagName === 'BUTTON') {
         // Получение родительской строки (tr)
@@ -446,7 +447,7 @@ document.querySelector('.gid-fillbody').addEventListener('click', (e) => {
         nadbavka.textContent = 0 + " ₽";
         let price = document.querySelector('.excursion-price');
         price.textContent = gidPrice.textContent;
-
+        globalPrice = parseInt(gidPrice.textContent);
         // Ваш код обработки клика на кнопку
         //console.log('Кнопка в строке с data-id ' + dataId + ' была нажата.');
 
@@ -482,13 +483,13 @@ function conditionOfModalForm() {
 
 }
 // ------------------------------------------------ADD EVENTLISTENER FOR FORM FIELDS---------------------------------------------------------- 
-function calculatePrice(guideServiceCost, hoursNumber, isThisDayOff, isItMorning, isItEvening, numberOfVisitors) {
+function calculatePrice(guideServiceCost, hoursNumber, isThisDayOff, isItMorning, isItEvening, numberOfVisitors, nadbavka) {
     let basePrice = guideServiceCost * hoursNumber * isThisDayOff;
     let morningSurcharge = isItMorning ? 400 : 0;
     let eveningSurcharge = isItEvening ? 1000 : 0;
     let visitorsSurcharge = 0;
 
-    if (numberOfVisitors > 1 && numberOfVisitors <= 5) {
+    if (numberOfVisitors >= 1 && numberOfVisitors <= 5) {
         visitorsSurcharge = 0;
     } else if (numberOfVisitors > 5 && numberOfVisitors <= 10) {
         visitorsSurcharge = 1000;
@@ -497,40 +498,93 @@ function calculatePrice(guideServiceCost, hoursNumber, isThisDayOff, isItMorning
     }
 
     let totalPrice = basePrice + morningSurcharge + eveningSurcharge + visitorsSurcharge;
-    return totalPrice;
+    return totalPrice + nadbavka;
 }
 function changePrice(sum, nadbavka) {
     let guideServiceCost = document.querySelector('.excursion-price');
     guideServiceCost.textContent = sum + " ₽";
-    let nadbavka2 = document.querySelector('.option-discount');
-    nadbavka2.textContent = nadbavka + " ₽";
+
+    let nadbavkaElement = document.querySelector('.option-discount');
+    nadbavkaElement.textContent = nadbavka + " ₽";
 }
+
+function isHoliday(date) {
+    const holidays = [
+        new Date('2024-01-01'), // Новый год
+        new Date('2024-03-08'), // Международный женский день
+        new Date('2024-05-01'), // Праздник труда
+        new Date('2024-05-09'), // День Победы
+        new Date('2024-06-12'), // День России
+        // далее по усмотрению
+    ];
+    for (const holiday of holidays) {
+        if (date.toISOString().split('T')[0] == holiday.toISOString().split('T')[0] || date.getDay() == 6 || date.getDay() == 0) {
+            console.log('Сегодня праздничный день!');
+            return true;
+        }
+    }
+    return false;
+}
+function hourToMinute(hour) {
+    let arr = hour.split(":");
+    return Number(arr[0] * 60) + Number(arr[1]);
+}
+function isMorning(time) {
+    let timeStart = new Date('2000-01-01T09:00').toISOString().split('T')[1];
+    timeStart = hourToMinute(timeStart);
+    let timeEnd = new Date('2000-01-01T12:00').toISOString().split('T')[1];
+    timeEnd = hourToMinute(timeEnd);
+    time = hourToMinute(time.toISOString().split('T')[1]);
+    if (timeStart < time && time < timeEnd) {
+        return true;
+    }
+    return false;
+}
+function isEvening(time) {
+    let timeStart = new Date('2000-01-01T20:00').toISOString().split('T')[1];
+    timeStart = hourToMinute(timeStart);
+    let timeEnd = new Date('2000-01-01T23:00').toISOString().split('T')[1];
+    timeEnd = hourToMinute(timeEnd);
+    time = hourToMinute(time.toISOString().split('T')[1]);
+    if (timeStart < time && time < timeEnd) {
+        return true;
+    }
+    return false;
+}
+
 document.querySelector('.add-event').addEventListener('change', (e) => {
-    let guideServiceCost = document.querySelector('.excursion-price').textContent.split(" ")[0];
+
     let day = document.querySelector(".datepicker").value;
     let hoursNumber = document.querySelector('.hours-selected').value;
+    let countExcurs = document.querySelector(".people-amount").value;
     let optionOne = false;
     let optionTwo = false;
-    let sThisDayOff = false;
+    let isThisDayOff = false;
     let isItMorning = false;
     let isItEvening = false;
     let nadbavka = 0;
     let sum = 0;
-    if (e.target.classList.contains('datepicker')) {
-        let time = e.target.value;
 
+    if (e.target.classList.contains('datepicker')) {
+        isThisDayOff = isHoliday(new Date(`${day}`))
         console.log(day)
+        console.log(isThisDayOff)
     } else if (e.target.classList.contains('excursion-start')) {
         let date = document.querySelector(".datepicker").value;
         let selectedTime = e.target.value;
         let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         let selectedTimeObj = new Date(`2000-01-01T${selectedTime}`);
+        isItEvening = isEvening(selectedTimeObj);
+        isItMorning = isMorning(selectedTimeObj);
+        console.log(isItEvening);
         let currentTimeObj = new Date(`2000-01-01T${currentTime}`);
 
         let currentDate = new Date().toISOString().split('T')[0];
 
-        if (currentDate === date && currentTimeObj > selectedTimeObj) {
-            let timeDifference = (currentTimeObj - selectedTimeObj) / (1000 * 60);
+        if (currentDate == date && currentTimeObj > selectedTimeObj) {
+            let timeDifference = (hourToMinute(currentTimeObj
+                .toISOString().split('T')[1]) - hourToMinute(selectedTimeObj
+                    .toISOString().split('T')[1]));
 
             if (timeDifference > 30 && timeDifference <= 60) {
                 optionOne = true;
@@ -545,10 +599,27 @@ document.querySelector('.add-event').addEventListener('change', (e) => {
 
         console.log(hoursNumber)
     } else if (e.target.classList.contains('people-amount')) {
-
+        let optionChecked = document.querySelector(".option-name").checked;
+        console.log(optionChecked)
+        if (optionChecked) {
+            nadbavka += e.target.value * 500;
+        }
+        else { 
+            console.log(optionChecked)
+        }
+        countExcurs = e.target.value;
     } else if (e.target.classList.contains('option-name')) {
+        let event = e.target.checked;
+        let count = document.querySelector(".people-amount").value;
 
+        if (event) {
+            nadbavka += count * 500;
+        } else {
+            nadbavka = 0;
+        }
     }
+    let holidate = isThisDayOff ? 1.5 : 1;
+    sum = calculatePrice(globalPrice, Number(hoursNumber), holidate, isItMorning, isItEvening, Number(countExcurs), nadbavka);
     // sum = gui
     changePrice(sum, nadbavka);
 })
