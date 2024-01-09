@@ -34,7 +34,7 @@
                         <a class="nav-link mx-2" href="#">Products</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link mx-2" href="#">Личный Кабинет</a>
+                        <a class="nav-link mx-2" href="/exam2/personalroom.html">Личный Кабинет</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link mx-2 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
@@ -163,7 +163,7 @@
         <div class="row m-auto">
             <div class="col-md-12 col-sm-10">
 
-                <div class="alert w- alert-danger d-flex align-items-center" role="alert">
+                <div class="alert  alert-danger d-flex align-items-center" role="alert">
                     <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
                         <use xlink:href="#exclamation-triangle-fill" />
                     </svg>
@@ -174,8 +174,22 @@
             </div>
         </div>
     </div>
-    <!-- таблица с маршрутами -->
+   <!-- alert from server -->
+    <div class="container mt-4 z-3 alert-msg d-none position-fixed top-0 start-50 translate-middle-x msg-from-server">
+        <div class="row m-auto">
+            <div class="col-md-12 col-sm-10">
 
+                <div class="alert msg-from2 d-flex align-items-center" role="alert">
+                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                        <use xlink:href="#exclamation-triangle-fill" />
+                    </svg>
+                    <div class="main-msg">
+                        По вашему запросу ничего не найден!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Секция с поисками -->
     <div class="container my-5">
         <div class="row d-flex justify-content-around">
@@ -215,8 +229,9 @@
     <!-- ----------------------------------------------модальное окно для создание заявки ----------------------------------------------------------->
 
     <section>
+        
         <!-- Modal -->
-        <div class="modal fade" id="addRequestModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        <div class="modal fade request-modal" id="addRequestModal" tabindex="-1" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -243,7 +258,7 @@
                                     <div class="col-sm-6 pt-3">
                                         <label for="start-time">Время начала: </label>
                                         <input type="time" id="start-time" class="form-control excursion-start"
-                                            name="time" placeholder="Время" min="09:00" max="23:00" step="1800"
+                                            name="time" value="09:00" placeholder="Время" min="09:00" max="23:00" step="1800"
                                             required>
 
                                     </div>
@@ -280,6 +295,14 @@
                                             яркие акценты в уникальный опыт каждого посетителя.</p>
                                     </span>
                                     <br>
+                                    <input class="form-check-input option2" type="checkbox" id="option2" value="">
+                                    <label class="form-check-label fst-italic" for="option2">
+                                        Быстрый выезд гида (в течение часа)
+                                    </label>
+                                    <br>
+                                    <span class="fw-bold ">Описание опции
+                                        <p class="option-description">Повышает стоимость на 30%.</p>
+                                    </span>
                                     <span>Размер надбавки(без учета %):
                                         <span class="option-discount"> ---</span>
                                     </span>
@@ -290,9 +313,9 @@
                                     </p>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary col-md-3"
+                                    <button type="button" class="btn btn-secondary col-md-3 close"
                                         data-bs-dismiss="modal">Отменить</button>
-                                    <button type="submit"
+                                    <button type="button"
                                         class="btn btn-primary col-md-3 sendRequest">Отправить</button>
                                 </div>
 

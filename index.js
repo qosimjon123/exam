@@ -24,22 +24,25 @@ let getRequestMainTable = async function (url, method) {
     if (method == 'GET') {
         return await fetch(url, {
 
-        })
+        });
 
     }
 };
 // --------------------------------------------------------таблица с гидами---------------------------------------------------------------
 function getGidTable(id) {
-    //Поменяй ссылку на свою
-
-    let cur_url = new URL(`http://exam-2023-1-api.std-900.ist.mospolytech.ru/api/routes/${id}/guides?api_key=${apiKey}`);
+   
+    let url = "http://exam-2023-1-api.std-900.ist.mospolytech.ru/api/routes/"
+    let cur_url = new URL(`${url}${id}/guides?api_key=${apiKey}`);
     getRequestMainTable(cur_url, 'GET')
         .then((data) => {
-            return data.json()
+            return data.json();
         })
-        .then(data => { fillGitTable(data); fillSelectlang(data) }
+        .then((data) => {
+            fillGitTable(data);
+            fillSelectlang(data);
+        }
         )
-        .catch(error => console.error(`Something went wrong: ${error}`))
+        .catch(error => console.error(`Something went wrong: ${error}`));
 
 }
 //   ДЛЯ ОПРЕДЕЛЕНИЯ ГОД/ЛЕТ/ГОДА
@@ -73,7 +76,7 @@ function fillSelectlang(data) {
 
     for (let lang of sessionDb) {
         if (BdForLang.has(lang)) {
-            console.log(lang)
+            console.log(lang);
         } else {
             BdForLang.add(lang);
         }
@@ -84,7 +87,7 @@ function fillSelectlang(data) {
         newOption.value = value;
         newOption.textContent = value;
         selectLang.append(newOption);
-    })
+    });
 }
 function fillGitTable(data) {
     let tableBody = document.querySelector('.gid-fillbody');
@@ -103,7 +106,8 @@ function fillGitTable(data) {
         id.setAttribute('data-route-id', data[i].route_id);
         Fio.textContent = data[i].name;
         let pluralDetect = plural(data[i].workExperience, declension);
-        workExperience.textContent = data[i].workExperience + ` ${pluralDetect}`;
+        workExperience.textContent = data[i]
+            .workExperience + ` ${pluralDetect}`;
         language.textContent = data[i].language;
         PricePerHour.textContent = data[i].pricePerHour + " ₽";
 
@@ -114,9 +118,7 @@ function fillGitTable(data) {
 
 function DeleteGid(routeId, method) {
     let table = document.querySelector(".gid-fillbody");
-    let currentRouteId = table.querySelectorAll(".id-git-route")
-
-
+    let currentRouteId = table.querySelectorAll(".id-git-route");
 
     for (const route of currentRouteId) {
 
@@ -142,7 +144,7 @@ function fillTable(data) {
     let template = document.querySelector('.template-row');
     tableBody.textContent = "";
     if (data == "netdanix") {
-        return
+        return;
     }
     for (let i = 0; i < data.length; i++) {
         let clonedRow = template.content.cloneNode(true);
@@ -161,6 +163,7 @@ function fillTable(data) {
 
 }
 let parse = [];
+let currentPage = 0;
 function parseData(data) {
     parse = [];
     currentPage = 0;
@@ -169,9 +172,8 @@ function parseData(data) {
         if (result.length == 5) {
             parse.push(result);
             result = [];
-        }
-        else {
-            result.push(data[i])
+        } else {
+            result.push(data[i]);
         }
     }
     parse.push(result);
@@ -179,7 +181,7 @@ function parseData(data) {
 
 }
 
-let currentPage = 0;
+
 let pagBtns = document.querySelector('.pagination-btn');
 
 pagBtns.addEventListener('click', paginationBtnActived);
@@ -237,15 +239,15 @@ function getMainTable() {
     let url = `http://exam-2023-1-api.std-900.ist.mospolytech.ru/api/routes?api_key=${apiKey}`;
     getRequestMainTable(url, 'GET')
         .then((data) => {
-            return data.json()
+            return data.json();
         })
         .then(data => {
             parseData(data); addHint(data);
 
-            saveToSessionStorage(data)
+            saveToSessionStorage(data);
         }
         )
-        .catch(error => console.error(`Something went wrong: ${error}`))
+        .catch(error => console.error(`Something went wrong: ${error}`));
 }
 //--------------------------------------------------SEARCHROUTEBLOCK----------------------------------------------------------
 let filterBtn = document.querySelector('.search-btn');
@@ -264,9 +266,9 @@ function searchFromBtn() {
             }
         }
         if (newData.length == 0) {
-            let activateMsg = document.querySelector(".alert-msg")
+            let activateMsg = document.querySelector(".alert-msg");
             activateMsg.classList.remove("d-none");
-            setTimeout(() => activateMsg.classList.add("d-none"), 2000)
+            setTimeout(() => activateMsg.classList.add("d-none"), 2000);
         }
         else {
             parseData(newData);
@@ -292,7 +294,7 @@ document.querySelector('.fillbody').addEventListener('click', function (event) {
 
             if (chosenRoute.size == 0) {
                 let delElem = document.querySelector('.chosen-gids');
-                delElem.classList.remove('d-none')
+                delElem.classList.remove('d-none');
 
 
             }
@@ -302,7 +304,7 @@ document.querySelector('.fillbody').addEventListener('click', function (event) {
             chosenRoute.add(dataId);
             if (chosenRoute.size > 0) {
                 let delElem = document.querySelector('.chosen-gids');
-                delElem.classList.add('d-none')
+                delElem.classList.add('d-none');
 
 
             }
@@ -316,7 +318,7 @@ document.querySelector('.fillbody').addEventListener('click', function (event) {
 // ------------------------------------------------Кнопка для выборанного маршрута----------------------------
 
 
-filterBtn.addEventListener('click', searchFromBtn)
+filterBtn.addEventListener('click', searchFromBtn);
 function addHint(data) {
     let getData = document.querySelector('#routes-list');
     for (let i = 0; i < data.length; i++) {
@@ -336,7 +338,7 @@ function hideElement(element) {
 
 function showElement(element) {
     let delElem = document.querySelector('.chosen-gids');
-    delElem.classList.add('d-none')
+    delElem.classList.add('d-none');
     if (element.classList.contains('d-none')) {
         element.classList.remove('d-none');
     }
@@ -360,7 +362,7 @@ document.querySelector('.lang-gid').addEventListener('change', (e) => {
     if (!foundResults) {
         console.log('Нет результатов для выбранного языка.');
         let delElem = document.querySelector('.chosen-gids');
-        delElem.classList.remove('d-none')
+        delElem.classList.remove('d-none');
     }
 });
 // ------------------------------------------------ОБРАБОТЧИК ДЛЯ ПЕЧАТИ ОПЫТ РАБОТЫ---------------------------------------------------------- 
@@ -372,11 +374,26 @@ workContainer.addEventListener("change", (e) => {
     if (e.target.classList.contains()) {
 
     }
-})
-
+});
 
 
 // ------------------------ВСЕ ЧТО СВЯЗАНО С ОТПРАВКОЙ ФОРМЫ НА СЕРВЕР + ОБЩАЯ ФУНКЦИЯ ДЛЯ ВСЕХ ТИПОВ ЗАПРОСА---------------------------------
+function msgFromServer(msg, alertType) {
+    let field = document.querySelector(".msg-from-server");
+    let alertElement = document.querySelector(".msg-from2");
+    let message = field.querySelector(".main-msg");
+
+    if (alertType === "alert-success" || alertType === "alert-danger") {
+        field.classList.remove("d-none");
+        alertElement.classList.add(alertType);
+        message.textContent = msg;
+
+        setTimeout(() => {
+            field.classList.add("d-none");
+            alertElement.classList.remove(alertType);
+        }, 2000);
+    }
+}
 
 async function requests(url, data, method) {
     if (method == "POST") {
@@ -384,32 +401,36 @@ async function requests(url, data, method) {
             method: method,
             body: data
         })
-            .then(Response => Response.json())
-            .catch((e) => console.log("Error in " + method))
+            .then(response => {
+                return response.json();
+            }).catch(error => {
+                console.error('Ошибка при выполнении запроса:', error.message);
+                msgFromServer(`Ошибка при выполнении запроса: ${error.message}`, "alert-danger");
+            });
     } else if (method == "GET") {
         return await fetch(url)
             .then(Response => Response.json())
-            .catch((e) => console.log("Error in " + method))
+            .catch((e) => console.log("Error in " + method));
     } else if (method == "PUT") {
         return await fetch(url, {
             method: method,
             body: data
         })
             .then(Response => Response.json())
-            .catch((e) => console.log("Error in " + method))
+            .catch((e) => console.log("Error in " + method));
     } else if (method == "DELETE") {
         return await fetch(url, {
             method: method,
             body: data
         })
             .then(Response => Response.json())
-            .catch((e) => console.log("Error in " + method))
+            .catch((e) => console.log("Error in " + method));
     }
 }
 // ----------------------------------------MODAL WINDOW TO SEND-------------------------------------------------------
 function getRouteNameById(data) {
     let local = JSON.parse(sessionStorage.getItem('data'));
-    console.log(local[5].name)
+    console.log(local[5].name);
     for (let i = 0; i < local.length; i++) {
         if (local[i].id == data) {
             console.log(local[i].name);
@@ -432,32 +453,42 @@ document.querySelector('.gid-fillbody').addEventListener('click', (e) => {
         // --------------------------------------------ОБНОВИТЬ И СБРОС ДЛЯ КАЖДОЙ СТРОКИ-------------------------------------------------
         let duration = document.querySelector(".one");
         duration.selected = true;
-        document.querySelector('.excursion-start').value = "";
         document.querySelector('#flexCheckDefault').checked = false;
         let peopleCount = document.querySelector('.people-amount');
         peopleCount.value = 1;
-        let gidPrice = row.querySelector(".PricePerHour")
-
+        let gidPrice = row.querySelector(".PricePerHour");
         // --------------------------------------------получение данных из модального окна + textcontent-------------------------------------------------
         let fioField = document.querySelector('.gid-name');
+        fioField.setAttribute("id", `${gidId.textContent}`);
         fioField.textContent = gidName.textContent;
         let routeField = document.querySelector('.excursion-name');
+        routeField.setAttribute("id", `${routeId}`);
         routeField.textContent = routeName;
         let nadbavka = document.querySelector('.option-discount');
         nadbavka.textContent = 0 + " ₽";
         let price = document.querySelector('.excursion-price');
         price.textContent = gidPrice.textContent;
         globalPrice = parseInt(gidPrice.textContent);
-        // Ваш код обработки клика на кнопку
+
+        const addEventElement = document.querySelector('.add-event');
+        const changeEvent = new Event('change', { bubbles: true });
+        addEventElement.dispatchEvent(changeEvent);
+
         //console.log('Кнопка в строке с data-id ' + dataId + ' была нажата.');
 
     }
-})
+});
 
 
 //--------------------------------------------------УСЛОВИИ ДЛЯ МОДАЛЬНОГО ОКНА ----------------------------------------------------------
 function conditionOfModalForm() {
     //---------------DATE-------------------
+    function addDays(date, days) {
+        let newDate = new Date(date);
+        newDate.setDate(newDate.getDate() + days);
+        return newDate;
+    }
+
     function addMonths(date, months) {
         let newDate = new Date(date);
         newDate.setMonth(newDate.getMonth() + months);
@@ -465,25 +496,23 @@ function conditionOfModalForm() {
     }
 
     let dateInput = document.querySelector('.datepicker');
-    let today = new Date();
-    let todayString = today.toISOString().split('T')[0];
+    let tomorrow = addDays(new Date(), 1);
+    let tomorrowString = tomorrow.toISOString().split('T')[0];
 
-    let endDate = addMonths(today, 3);
-    let endDateString = endDate.toISOString().split('T')[0];
-    dateInput.setAttribute("value", todayString)
-    dateInput.setAttribute("min", todayString);
-    dateInput.setAttribute("max", endDateString);
+    let threeMonthsFromTomorrow = addMonths(tomorrow, 3);
+    let threeMonthsFromTomorrowString = threeMonthsFromTomorrow.toISOString().split('T')[0];
+
+    dateInput.setAttribute("value", tomorrowString);
+    dateInput.setAttribute("min", tomorrowString);
+    dateInput.setAttribute("max", threeMonthsFromTomorrowString);
+
 
     // console.log(todayString, endDateString);
 
     //---------------CLOCK-------------------
-
-
-
-
 }
 // ------------------------------------------------ADD EVENTLISTENER FOR FORM FIELDS---------------------------------------------------------- 
-function calculatePrice(guideServiceCost, hoursNumber, isThisDayOff, isItMorning, isItEvening, numberOfVisitors, nadbavka) {
+function calculatePrice(guideServiceCost, hoursNumber, isThisDayOff, isItMorning, isItEvening, numberOfVisitors, nadbavka, optionOne) {
     let basePrice = guideServiceCost * hoursNumber * isThisDayOff;
     let morningSurcharge = isItMorning ? 400 : 0;
     let eveningSurcharge = isItEvening ? 1000 : 0;
@@ -498,7 +527,11 @@ function calculatePrice(guideServiceCost, hoursNumber, isThisDayOff, isItMorning
     }
 
     let totalPrice = basePrice + morningSurcharge + eveningSurcharge + visitorsSurcharge;
-    return totalPrice + nadbavka;
+    if (optionOne) {
+        let res = ((totalPrice + nadbavka) * 30) / 100;
+        totalPrice += res;
+    }
+    return Math.round(totalPrice + nadbavka);
 }
 function changePrice(sum, nadbavka) {
     let guideServiceCost = document.querySelector('.excursion-price');
@@ -535,7 +568,7 @@ function isMorning(time) {
     let timeEnd = new Date('2000-01-01T12:00').toISOString().split('T')[1];
     timeEnd = hourToMinute(timeEnd);
     time = hourToMinute(time.toISOString().split('T')[1]);
-    if (timeStart < time && time < timeEnd) {
+    if (timeStart <= time && time <= timeEnd) {
         return true;
     }
     return false;
@@ -546,85 +579,183 @@ function isEvening(time) {
     let timeEnd = new Date('2000-01-01T23:00').toISOString().split('T')[1];
     timeEnd = hourToMinute(timeEnd);
     time = hourToMinute(time.toISOString().split('T')[1]);
-    if (timeStart < time && time < timeEnd) {
+    if (timeStart <= time && time <= timeEnd) {
         return true;
     }
     return false;
 }
-
-document.querySelector('.add-event').addEventListener('change', (e) => {
+let optionOne = false;
+let optionTwo = false;
+document.querySelector('.add-event').addEventListener('change', () => {
 
     let day = document.querySelector(".datepicker").value;
     let hoursNumber = document.querySelector('.hours-selected').value;
     let countExcurs = document.querySelector(".people-amount").value;
-    let optionOne = false;
-    let optionTwo = false;
+    let isOption2 = document.querySelector(".option2")
+    if (isOption2.checked) {
+        optionOne = true;
+    } else {
+        optionOne = false;
+    }
     let isThisDayOff = false;
     let isItMorning = false;
     let isItEvening = false;
     let nadbavka = 0;
     let sum = 0;
+    // -----------------------DAY--------------------
+    isThisDayOff = isHoliday(new Date(`${day}`));
+    console.log(day);
+    console.log(isThisDayOff);
+    // ----------------------DATE AND TIME---------------------
+    let date = document.querySelector(".datepicker").value;
+    let selectedTime = document.querySelector(".excursion-start").value;
+    if (selectedTime == "") {
+        let currentDate = new Date();
+        currentDate.setMinutes(currentDate.getMinutes() + 30);
 
-    if (e.target.classList.contains('datepicker')) {
-        isThisDayOff = isHoliday(new Date(`${day}`))
-        console.log(day)
-        console.log(isThisDayOff)
-    } else if (e.target.classList.contains('excursion-start')) {
-        let date = document.querySelector(".datepicker").value;
-        let selectedTime = e.target.value;
-        let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        let selectedTimeObj = new Date(`2000-01-01T${selectedTime}`);
-        isItEvening = isEvening(selectedTimeObj);
-        isItMorning = isMorning(selectedTimeObj);
-        console.log(isItEvening);
-        let currentTimeObj = new Date(`2000-01-01T${currentTime}`);
-
-        let currentDate = new Date().toISOString().split('T')[0];
-
-        if (currentDate == date && currentTimeObj > selectedTimeObj) {
-            let timeDifference = (hourToMinute(currentTimeObj
-                .toISOString().split('T')[1]) - hourToMinute(selectedTimeObj
-                    .toISOString().split('T')[1]));
-
-            if (timeDifference > 30 && timeDifference <= 60) {
-                optionOne = true;
-                console.log("Условие выполнено");
-            } else {
-                console.log("Время меньше чем текущей времени или условие не выполнено");
-            }
-        }
-
-
-    } else if (e.target.classList.contains('hours-selected')) {
-
-        console.log(hoursNumber)
-    } else if (e.target.classList.contains('people-amount')) {
-        let optionChecked = document.querySelector(".option-name").checked;
-        console.log(optionChecked)
-        if (optionChecked) {
-            nadbavka += e.target.value * 500;
-        }
-        else { 
-            console.log(optionChecked)
-        }
-        countExcurs = e.target.value;
-    } else if (e.target.classList.contains('option-name')) {
-        let event = e.target.checked;
-        let count = document.querySelector(".people-amount").value;
-
-        if (event) {
-            nadbavka += count * 500;
-        } else {
-            nadbavka = 0;
-        }
+        let hours = currentDate.getHours().toString().padStart(2, '0');
+        let minutes = currentDate.getMinutes().toString().padStart(2, '0');
+        selectedTime = `${hours}:${minutes}`;
     }
+
+
+    // let currentTime = new Date()
+    //     .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    let selectedTimeObj = new Date(`2000-01-01T${selectedTime}`);
+    isItEvening = isEvening(selectedTimeObj);
+    isItMorning = isMorning(selectedTimeObj);
+    console.log(isItEvening);
+    // let currentTimeObj = new Date(`2000-01-01T${currentTime}`);
+
+    // let currentDate = new Date().toISOString().split('T')[0];
+    // console.log(hoursNumber);
+    // let selectedHours = selectedTimeObj.getHours();
+    // let selectedMinutes = selectedTimeObj.getMinutes();
+    // let currentHours = currentTimeObj.getHours();
+    // let currentMinutes = currentTimeObj.getMinutes();
+
+    // // Compare hours
+    // if (currentDate == date && (currentHours < selectedHours || (currentHours === selectedHours && currentMinutes < selectedMinutes))) {
+    //     let timeDifference = (selectedHours * 60 + selectedMinutes) - (currentHours * 60 + currentMinutes);
+
+    //     if (timeDifference > 30 && timeDifference <= 60) {
+    //         console.log("Условие выполнено");
+    //         optionOne = true;
+    //     } else {
+    //         console.log("Время меньше чем текущее время или условие не выполнено");
+    //     }
+    // }
+    // -------------------------------END DATE AND TIME-----------------------
+    let optionChecked = document.querySelector(".option-name").checked;
+    console.log(optionChecked);
+    if (optionChecked) {
+        nadbavka = countExcurs * 500;
+        optionTwo = true;
+
+    } else {
+        console.log(optionChecked);
+        optionTwo = false;
+    }
+    countExcurs = document.querySelector(".people-amount").value;
+    let event = document.querySelector(".option-name").checked;
+
+    if (event) {
+        nadbavka = countExcurs * 500;
+    } else {
+        nadbavka = 0;
+    }
+    // if (e.target.classList.contains('datepicker')) {
+
+
+    // } else if (e.target.classList.contains('excursion-start')) {
+
+    // } else if (e.target.classList.contains('hours-selected')) {
+
+
+    // } else if (e.target.classList.contains('people-amount')) {
+
+    // } else if (e.target.classList.contains('option-name')) {
+
+    // }
     let holidate = isThisDayOff ? 1.5 : 1;
-    sum = calculatePrice(globalPrice, Number(hoursNumber), holidate, isItMorning, isItEvening, Number(countExcurs), nadbavka);
+    sum = calculatePrice(globalPrice, Number(hoursNumber),
+        holidate, isItMorning, isItEvening, Number(countExcurs), nadbavka, optionOne);
     // sum = gui
     changePrice(sum, nadbavka);
-})
-// ------------------------------------------------ЗАГРУЗКА----------------------------------------------------------- 
+});
+// ------------------------------------------------КНОПКА SENDREQUEST-----------------------------------------------------------
+// function isTimeTrue(time) {
+//     let minute = hourToMinute(time);
+//     if 
+// }
+document.querySelector(".sendRequest").addEventListener("click", () => {
+    let formData = new FormData();
+    let date = document.querySelector(".datepicker").value;
+    let hoursNumber = Number(document.querySelector('.hours-selected').value);
+    let countExcurs = Number(document.querySelector(".people-amount").value);
+    let price = Math.round(Number(document.querySelector(".excursion-price").textContent.split(" ")[0]));
+    let fioField = Number(document.querySelector('.gid-name').getAttribute("id"));
+    let routeField = Number(document.querySelector('.excursion-name').getAttribute("id"));
+    let selectedTime = document.querySelector(".excursion-start").value;
+
+
+   
+    console.log(`date: ${date}, type: ${typeof date}`);
+    console.log(`hoursNumber: ${hoursNumber}, type: ${typeof hoursNumber}`);
+    console.log(`countExcurs: ${countExcurs}, type: ${typeof countExcurs}`);
+    console.log(`price: ${price}, type: ${typeof price}`);
+    console.log(`fioField: ${fioField}, type: ${typeof fioField}`);
+    console.log(`routeField: ${routeField}, type: ${typeof routeField}`);
+    console.log(`Time: ${selectedTime}, type: ${typeof selectedTime}`);
+
+   
+    formData.append('date', date);
+    formData.append('duration', hoursNumber);
+    formData.append('guide_id', fioField);
+    formData.append('optionFirst', optionOne ? 1 : 0);
+    formData.append('optionSecond', optionTwo ? 1 : 0);
+    formData.append('persons', countExcurs);
+    formData.append('price', price);
+    formData.append('route_id', routeField);
+    formData.append('time', selectedTime);
+    let url = `http://exam-2023-1-api.std-900.ist.mospolytech.ru/api/orders?api_key=${apiKey}`;
+    let res = requests(url, formData, "POST");
+    res.then(data => {
+        console.log(data);
+        let key = "error"
+        let isErr = key in data;
+        if (isErr) {
+            msgFromServer(`${data.error}`, "alert-danger");
+            document.querySelector(".close").click();
+        } else {
+            
+            msgFromServer("Заявка успешно оправлено", "alert-success");
+            document.querySelector(".close").click();
+        }
+
+    });
+
+
+
+
+
+  
+});
+
+// ------------------------------------------------КНОПКА SENDREQUEST----------------------------------------------------------- 
+document.querySelector('#start-time').addEventListener('input', function () {
+    let enteredTime = this.value;
+
+    if (/^([0-1]?[0-9]|2[0-3]):(00|30)$/.test(enteredTime)) {
+        
+        this.dataset.prevValidTime = enteredTime;
+    } else {
+        
+        this.value = this.dataset.prevValidTime || '';
+    }
+});
 window.onload = function () {
     getMainTable();
     conditionOfModalForm();
+
 };
